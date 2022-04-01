@@ -1,0 +1,16 @@
+server:
+  port: ${PORT:8888}
+spring:
+  cloud:
+    config:
+      server:
+        git:
+          uri: ${GIT_URI:https://github.com/kuranushka/gb-settings-mart}
+          clone-on-start: true
+          username: ${GIT_USERNAME:geek}
+          password: ${GIT_PASSWORD:geek}
+        default-label: lesson_3_kuranov
+  security:
+    user:
+      name: ${SECURITY_USER:geek_user}
+      password: ${SECURITY_PASS:geek_pass}
