@@ -36,7 +36,7 @@ public class ManufacturerController {
             }
         }
         log.error("Retryer");
-        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @PostMapping

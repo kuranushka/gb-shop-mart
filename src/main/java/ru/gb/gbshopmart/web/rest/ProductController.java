@@ -38,17 +38,26 @@ public class ProductController {
 
     @PostMapping
     public ResponseEntity<?> handlePost(@Validated @RequestBody ProductDto productDto) {
-        ProductDto savedProduct = productService.save(productDto);
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setLocation(URI.create("/api/v1/product/" + savedProduct.getId()));
-        return new ResponseEntity<>(httpHeaders, HttpStatus.CREATED);
+        if (productService.isValidAttributes(productDto.getManufacturer(), productDto.getCategories())) {
+            ProductDto savedProduct = productService.save(productDto);
+            HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.setLocation(URI.create("/api/v1/product/" + savedProduct.getId()));
+            return new ResponseEntity<>(httpHeaders, HttpStatus.CREATED);
+        } else {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+
     }
 
     @PutMapping("/{productId}")
     public ResponseEntity<?> handleUpdate(@PathVariable("productId") Long id, @Validated @RequestBody ProductDto productDto) {
-        productDto.setId(id);
-        productService.save(productDto);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        if (productService.isValidAttributes(productDto.getManufacturer(), productDto.getCategories())) {
+            productDto.setId(id);
+            productService.save(productDto);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
     }
 
     @DeleteMapping("/{productId}")

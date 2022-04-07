@@ -24,7 +24,7 @@ public class Manufacturer extends InfoEntity {
     @Column(name = "name")
     private String name;
 
-    @OneToMany(mappedBy = "manufacturer", cascade = CascadeType.MERGE)
+    @OneToMany(mappedBy = "manufacturer", cascade = CascadeType.ALL)
     private Set<Product> products;
 
     public boolean addProduct(Product product) {
