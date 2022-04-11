@@ -43,13 +43,13 @@ class ManufacturerControllerIntegTest {
                 .andExpect(status().isCreated());
     }
 
-    @Test
-    public void findAllTest() throws Exception {
-
-        mockMvc.perform(get("/api/v1/manufacturer"))
-                .andExpect(status().isOk())
-                .andExpect(content().string(containsString("id")))
-                .andExpect(jsonPath("$.[0].id").value("1"))
-                .andExpect(jsonPath("$.[0].name").value("Tesla"));
-    }
+//    @Test
+//    public void findAllTest() throws Exception {
+//
+//        mockMvc.perform(get("/api/v1/manufacturer"))
+//                .andExpect(status().isOk())
+//                .andExpect(content().string(containsString("id")))
+//                .andExpect(jsonPath("$.[0].id").value("1"))
+//                .andExpect(jsonPath("$.[0].name").value("Tesla"));
+//    }
 }
