@@ -8,6 +8,7 @@ import ru.gb.gbapi.product.api.ProductGateway;
 import ru.gb.gbapi.product.dto.ProductDto;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor

@@ -8,7 +8,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.gb.gbapi.category.dto.CategoryDto;
 import ru.gb.gbapi.manufacturer.dto.ManufacturerDto;
 
 import static org.hamcrest.Matchers.containsString;

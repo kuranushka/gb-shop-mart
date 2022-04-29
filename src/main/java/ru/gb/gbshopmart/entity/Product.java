@@ -1,6 +1,9 @@
 package ru.gb.gbshopmart.entity;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import ru.gb.gbapi.common.enums.Status;
 import ru.gb.gbshopmart.entity.common.InfoEntity;

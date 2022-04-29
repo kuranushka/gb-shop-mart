@@ -1,7 +1,6 @@
 package ru.gb.gbshopmart.dao;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import ru.gb.gbapi.category.dto.CategoryDto;
 import ru.gb.gbshopmart.entity.Category;
 
 import java.util.List;

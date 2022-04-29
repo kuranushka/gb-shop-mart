@@ -1,14 +1,10 @@
 package ru.gb.gbapi.manufacturer.api;
 
-import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.gb.gbapi.manufacturer.dto.ManufacturerDto;
 
-import java.net.URI;
 import java.util.List;
 
 public interface ManufacturerGateway {
