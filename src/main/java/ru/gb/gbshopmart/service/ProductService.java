@@ -104,10 +104,10 @@ public class ProductService {
                         .title(category.getTitle())
                         .build())
                 .collect(Collectors.toSet());
-        Optional<Manufacturer> optionalManufacturer = manufacturerDao.findByName(productDto.getManufacturer());
+        Optional<Manufacturer> optionalManufacturer = manufacturerDao.findByName(productDto.getManufacturer().getName());
         if (optionalManufacturer.isPresent()) {
             productDto.setCategories(categories);
-            productDto.setManufacturer(optionalManufacturer.get().getName());
+            productDto.setManufacturer(productDto.getManufacturer());
         }
         return Optional.of(productDto);
     }
