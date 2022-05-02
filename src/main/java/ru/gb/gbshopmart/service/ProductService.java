@@ -3,23 +3,27 @@ package ru.gb.gbshopmart.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import ru.gb.gbapi.category.dto.CategoryDto;
 import ru.gb.gbapi.common.enums.Status;
 import ru.gb.gbapi.product.dto.ProductDto;
 import ru.gb.gbshopmart.dao.CategoryDao;
 import ru.gb.gbshopmart.dao.ManufacturerDao;
 import ru.gb.gbshopmart.dao.ProductDao;
+import ru.gb.gbshopmart.entity.Manufacturer;
 import ru.gb.gbshopmart.entity.Product;
 import ru.gb.gbshopmart.web.dto.mapper.ProductMapper;
 
-
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -91,4 +95,44 @@ public class ProductService {
         return productDao.findAllByStatus(Status.ACTIVE, PageRequest.of(page, size, Sort.by("id")));
     }
 
+    public Optional<ProductDto> isValidAttributes(ProductDto productDto) {
+        Set<String> titles = productDto.getCategories().stream().map(CategoryDto::getTitle).collect(Collectors.toSet());
+        Set<CategoryDto> categories = categoryDao.findCategoriesByTitleIn(titles)
+                .stream()
+                .map(category -> CategoryDto.builder()
+                        .id(category.getId())
+                        .title(category.getTitle())
+                        .build())
+                .collect(Collectors.toSet());
+        Optional<Manufacturer> optionalManufacturer = manufacturerDao.findByName(productDto.getManufacturer().getName());
+        if (optionalManufacturer.isPresent()) {
+            productDto.setCategories(categories);
+            productDto.setManufacturer(productDto.getManufacturer());
+        }
+        return Optional.of(productDto);
+    }
+
+    @Transactional(readOnly = true)
+    public Long findMinCost() {
+        return productDao.findMinCost();
+    }
+
+
+    @Transactional(readOnly = true)
+    public Long findMaxCost() {
+        return productDao.findMaxCost();
+    }
+
+    public Page<Product> findAllPagingAndSortingAndFiltering(
+            Integer page, Integer productsOnPage,
+            Long min, Long max,
+            String sortDirection) {
+        Pageable pageable;
+        if (sortDirection.equals("asc")) {
+            pageable = PageRequest.of(page, productsOnPage, Sort.by("cost").ascending());
+        } else {
+            pageable = PageRequest.of(page, productsOnPage, Sort.by("cost").descending());
+        }
+        return productDao.findAllPagingAndSortingAndFiltering(pageable, min, max);
+    }
 }

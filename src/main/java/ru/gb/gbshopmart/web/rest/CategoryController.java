@@ -49,6 +49,9 @@ public class CategoryController {
 
     @PutMapping("/{categoryId}")
     public ResponseEntity<?> handleUpdate(@PathVariable("categoryId") Long id, @Validated @RequestBody CategoryDto categoryDto) {
+        if (categoryService.findById(id) == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
         categoryDto.setId(id);
         categoryService.save(categoryDto);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

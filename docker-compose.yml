@@ -1,0 +1,90 @@
+version: '3.3'
+services:
+  config-server:
+    container_name: config-server
+    hostname: config-server
+    image: config-server-image
+    ports:
+      - 8888:8888
+    entrypoint: ["java", "-jar", "config-server.jar"]
+    expose:
+      - 8888
+    environment:
+      - SPRING_APPLICATION_NAME=config-server
+      - ENCRYPT_KEYSTORE_ALIAS=gbshopmart
+      - ENCRYPT_KEYSTORE_LOCATION=file:/app/config-server/server.jks
+      - ENCRYPT_KEYSTORE_PASSWORD=123456
+      - PORT=8888
+      - GIT_URI=https://github.com/kuranushka/gb-shop-mart-docker-settings
+      - GIT_USERNAME=geek
+      - GIT_PASSWORD=geek
+      - SECURITY_USER=geek_user
+      - SECURITY_PASS=geek_pass
+    restart: always
+  gb-external-api:
+    container_name: gb-external-api
+    hostname: gb-external-api
+    image: gb-external-api-image
+    ports:
+      - 8081:8081
+    entrypoint: ["java", "-jar", "gb-external-api.jar"]
+    expose:
+      - 8081
+    environment:
+      - server.port=8081
+      - servlet.contxt-path=/external
+      - SPRING_PROFILES_INCLUDE=dev
+      - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
+      - SPRING_CLOUD_CONFIG_LABEL=master
+      - SPRING_CLOUD_CONFIG_USERNAME=geek_user
+      - SPRING_CLOUD_CONFIG_PASSWORD=geek_pass
+      - SPRING_APPLICATION_NAME=gb-external-api
+    restart: always
+    links:
+      - config-server
+      - db
+      - gb-gb-shop-mart
+  gb-gb-shop-mart:
+    container_name: gb-shop-mart
+    hostname: gb-shop-mart
+    image: gb-shop-mart-image
+    ports:
+      - 8080:8080
+    entrypoint: [ "java", "-jar", "gb-shop-mart.jar" ]
+    expose:
+      - 8080
+    environment:
+      - server.port=8080
+      - servlet.contxt-path=/external
+      - SPRING_PROFILES_INCLUDE=dev
+      - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
+      - SPRING_CLOUD_CONFIG_LABEL=master
+      - SPRING_CLOUD_CONFIG_USERNAME=geek_user
+      - SPRING_CLOUD_CONFIG_PASSWORD=geek_pass
+      - SPRING_APPLICATION_NAME=gb-shop-mart
+      - jpa.hibernate.ddl-auto=create-drop
+      - jpa.hibernate.generate-ddl=true
+      - jpa.hibernate.defer-datasource-initialization=true
+      - sql.init.mode=always
+      - spring.datasource.url=jdbc:postgresql://db:5432/gb_shop
+      - spring.datasource.username=geek
+      - spring.datasource.password=geek
+    restart: always
+    links:
+      - config-server
+      - db
+  db:
+    container_name: db
+    hostname: db
+    image: postgres-db-image
+    ports:
+      - 5432:5432
+    expose:
+      - 5432
+    environment:
+      - POSTGRES_PASSWORD=geek
+      - POSTGRES_USER=geek
+      - POSTGRES_DB=gb_shop
+    restart: always
+    links:
+      - config-server

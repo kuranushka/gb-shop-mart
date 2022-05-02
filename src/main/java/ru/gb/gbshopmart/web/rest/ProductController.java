@@ -11,6 +11,7 @@ import ru.gb.gbshopmart.service.ProductService;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -38,17 +39,28 @@ public class ProductController {
 
     @PostMapping
     public ResponseEntity<?> handlePost(@Validated @RequestBody ProductDto productDto) {
-        ProductDto savedProduct = productService.save(productDto);
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setLocation(URI.create("/api/v1/product/" + savedProduct.getId()));
-        return new ResponseEntity<>(httpHeaders, HttpStatus.CREATED);
+        Optional<ProductDto> optionalProductDto = productService.isValidAttributes(productDto);
+        if (optionalProductDto.isPresent()) {
+            ProductDto savedProduct = productService.save(optionalProductDto.get());
+            HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.setLocation(URI.create("/api/v1/product/" + savedProduct.getId()));
+            return new ResponseEntity<>(httpHeaders, HttpStatus.CREATED);
+        } else {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+
     }
 
     @PutMapping("/{productId}")
     public ResponseEntity<?> handleUpdate(@PathVariable("productId") Long id, @Validated @RequestBody ProductDto productDto) {
-        productDto.setId(id);
-        productService.save(productDto);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        Optional<ProductDto> optionalProductDto = productService.isValidAttributes(productDto);
+        if (optionalProductDto.isPresent()) {
+            optionalProductDto.get().setId(id);
+            productService.save(optionalProductDto.get());
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
     }
 
     @DeleteMapping("/{productId}")

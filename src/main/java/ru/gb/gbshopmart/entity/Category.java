@@ -22,7 +22,7 @@ public class Category extends InfoEntity {
     @Column(name = "title")
     private String title;
 
-    @ManyToMany(cascade = CascadeType.MERGE)
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "product_category",
             joinColumns = @JoinColumn(name = "category_id"),

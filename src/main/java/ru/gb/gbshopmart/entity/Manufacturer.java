@@ -1,10 +1,9 @@
 package ru.gb.gbshopmart.entity;
 
-import lombok.*;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedBy;
-import org.springframework.data.annotation.LastModifiedDate;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import ru.gb.gbshopmart.entity.common.InfoEntity;
 
@@ -24,7 +23,7 @@ public class Manufacturer extends InfoEntity {
     @Column(name = "name")
     private String name;
 
-    @OneToMany(mappedBy = "manufacturer", cascade = CascadeType.MERGE)
+    @OneToMany(mappedBy = "manufacturer", cascade = CascadeType.ALL)
     private Set<Product> products;
 
     public boolean addProduct(Product product) {
