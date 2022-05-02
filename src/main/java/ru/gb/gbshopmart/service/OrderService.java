@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.gb.gbapi.event.OrderEvent;
 import ru.gb.gbapi.order.dto.OrderDto;
-import ru.gb.gbshopmart.config.JmsConfig;
+import ru.gb.gbshopmart.config.JmsProperties;
 import ru.gb.gbshopmart.dao.OrderDao;
 import ru.gb.gbshopmart.entity.Order;
 import ru.gb.gbshopmart.web.dto.mapper.OrderMapper;
@@ -24,6 +24,7 @@ public class OrderService {
     private final OrderDao orderDao;
     private final OrderMapper orderMapper;
     private final JmsTemplate jmsTemplate;
+    private final JmsProperties jmsProperties;
 
     @Transactional
     public OrderDto save(final OrderDto orderDto) {
@@ -34,7 +35,7 @@ public class OrderService {
             );
         }
         OrderDto savedOrderDto = orderMapper.toOrderDto(orderDao.save(order));
-        jmsTemplate.convertAndSend(JmsConfig.ORDER_CHANGED_QUEUE, new OrderEvent(savedOrderDto));
+        jmsTemplate.convertAndSend(jmsProperties.getOrderChangedQueue(), new OrderEvent(savedOrderDto));
         return savedOrderDto;
     }
 
